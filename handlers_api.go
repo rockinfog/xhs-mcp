@@ -235,6 +235,29 @@ func (s *AppServer) postCommentHandler(c *gin.Context) {
 	respondSuccess(c, result, result.Message)
 }
 
+// getTopicFeedsHandler 获取话题页面Feeds
+func (s *AppServer) getTopicFeedsHandler(c *gin.Context) {
+	var req struct {
+		TopicID string `json:"topic_id" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, http.StatusBadRequest, "INVALID_REQUEST",
+			"请求参数错误", err.Error())
+		return
+	}
+
+	// 获取话题页面的Feeds
+	result, err := s.xiaohongshuService.GetTopicFeeds(c.Request.Context(), req.TopicID)
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, "GET_TOPIC_FEEDS_FAILED",
+			"获取话题页面Feeds失败", err.Error())
+		return
+	}
+
+	c.Set("account", "ai-report")
+	respondSuccess(c, result, "获取话题页面Feeds成功")
+}
+
 // healthHandler 健康检查
 func healthHandler(c *gin.Context) {
 	respondSuccess(c, map[string]any{

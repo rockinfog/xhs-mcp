@@ -358,6 +358,65 @@ Content-Type: application/json
 
 ---
 
+### 4.4 获取话题页面 Feeds
+
+获取指定话题页面的 Feeds 列表。
+
+**请求**
+```
+POST /api/v1/topic/feeds
+Content-Type: application/json
+```
+
+**请求体**
+```json
+{
+  "topic_id": "5c30f4461414b9000176fca0"
+}
+```
+
+**请求参数说明:**
+- `topic_id` (string, required): 话题ID，从话题页面URL获取
+
+**响应**
+```json
+{
+  "success": true,
+  "data": {
+    "topic": {
+      "id": "5c30f4461414b9000176fca0",
+      "name": "话题名称",
+      "desc": "话题描述",
+      "viewNum": "10000",
+      "followNum": "1000"
+    },
+    "feeds": [
+      {
+        "xsecToken": "security_token_value",
+        "id": "feed_id_1",
+        "modelType": "note",
+        "noteCard": {
+          "displayTitle": "话题相关笔记标题",
+          "user": {
+            "userId": "user_id_1",
+            "nickname": "用户昵称"
+          },
+          "interactInfo": {
+            "likedCount": "80",
+            "commentCount": "35"
+          }
+        },
+        "index": 0
+      }
+    ],
+    "count": 10
+  },
+  "message": "获取话题页面Feeds成功"
+}
+```
+
+---
+
 ### 5. 用户信息
 
 获取用户主页信息。

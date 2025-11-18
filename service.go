@@ -86,6 +86,13 @@ type UserProfileResponse struct {
 	Feeds         []xiaohongshu.Feed             `json:"feeds"`
 }
 
+// TopicResponse 话题响应
+type TopicResponse struct {
+	Topic xiaohongshu.TopicInfo   `json:"topic"`
+	Feeds []xiaohongshu.TopicFeed `json:"feeds"`
+	Count int                     `json:"count"`
+}
+
 // DeleteCookies 删除 cookies 文件，用于登录重置
 func (s *XiaohongshuService) DeleteCookies(ctx context.Context) error {
 	cookiePath := cookies.GetCookiesFilePath()
@@ -322,6 +329,33 @@ func (s *XiaohongshuService) SearchFeeds(ctx context.Context, keyword string, fi
 	response := &FeedsListResponse{
 		Feeds: feeds,
 		Count: len(feeds),
+	}
+
+	return response, nil
+}
+
+// GetTopicFeeds 获取话题页面的Feed列表
+func (s *XiaohongshuService) GetTopicFeeds(ctx context.Context, topicID string) (*TopicResponse, error) {
+	b := newBrowser()
+	defer b.Close()
+
+	page := b.NewPage()
+	defer page.Close()
+
+	// 创建话题页面 action
+	action := xiaohongshu.NewTopicAction(page)
+
+	// 获取话题页面的Feed列表
+	result, err := action.GetTopicFeeds(ctx, topicID)
+	if err != nil {
+		logrus.Errorf("获取话题页面Feeds列表失败: %v", err)
+		return nil, err
+	}
+
+	response := &TopicResponse{
+		Topic: result.Topic,
+		Feeds: result.Feeds,
+		Count: result.Count,
 	}
 
 	return response, nil
